@@ -1,0 +1,68 @@
+{
+    "users" : [
+        {
+            "id" : 1,
+            "name" : "Garold",
+            "login" : "garold12",
+            "password": "12345"
+        },
+        {
+            "id" : 2,
+            "name" : "Midel",
+            "login" : "midel14",
+            "password": "123456"
+        }
+    ],
+    "boards":[
+        {
+            "id": 147,
+            "title": "First board",
+            "columns":[
+                {
+                    "id":121,
+                    "title": "to do",
+                    "order": 1
+                },
+                {
+                    "id":122,
+                    "title": "in progress",
+                    "order": 2
+                },
+                {
+                    "id":123,
+                    "title": "done",
+                    "order": 3
+                }
+            ]
+        }
+    ],
+    "tasks":[
+        {
+            "id": 12,
+            "title": "Make task1",
+            "order": 1,
+            "description": "task about caesar cipher",
+            "userId": 1, 
+            "boardId": 147,
+            "columnId": 123
+          },
+          {
+            "id": 13,
+            "title": "Make task2",
+            "order": 2,
+            "description": "task about boards",
+            "userId": 1, 
+            "boardId": 147,
+            "columnId": 122
+          },
+          {
+            "id": 13,
+            "title": "Make task2",
+            "order": 1,
+            "description": "task about boards",
+            "userId": 2, 
+            "boardId": 147,
+            "columnId": 121
+          }
+    ]
+}
