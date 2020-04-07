@@ -15,24 +15,32 @@ router.route('/').get(async (req, res) => {
         .set('Content-Type', 'application/json')
         .end()
     )
-    .catch(err => {
-      res.status(400).send(err);
+    .catch(() => {
+      res.statusMessage = statusCodes[400];
+      res.status(400).send();
     });
 });
 
 router.route('/:id').get(async (req, res) => {
-  const board = await boardsService.getBoardById(req.params.id);
-  res.set('Content-Type', 'application/json');
-  if (board[1] === 200) {
-    res.statusMessage = statusCodes[board[1]].all;
-    res
-      .json(board[0])
-      .status(board[1])
-      .end();
-  } else {
-    res.statusMessage = statusCodes[board[1]];
-    res.status(board[1]).end();
-  }
+  await boardsService
+    .getBoardById(req.params.id)
+    .then(board => {
+      if (board[0] === 404) {
+        res.statusMessage = statusCodes[404];
+        res.status(404).end();
+      } else {
+        res.statusMessage = statusCodes[200].all;
+        res
+          .json(board[0])
+          .status(200)
+          .set('Content-Type', 'application/json')
+          .end();
+      }
+    })
+    .catch(() => {
+      res.statusMessage = statusCodes[400];
+      res.status(400).end();
+    });
 });
 
 router.route('/').post(async (req, res) => {
@@ -48,8 +56,7 @@ router.route('/').post(async (req, res) => {
         .set('Content-Type', 'application/json')
         .end()
     )
-    .catch(err => {
-      // console.log(err);
+    .catch(() => {
       res.statusMessage = statusCodes[400];
       res.status(400).end();
     });
@@ -57,20 +64,25 @@ router.route('/').post(async (req, res) => {
 
 router.route('/:id').put(async (req, res) => {
   const newBoardData = req.body;
-  const status = 200;
-  res.statusMessage = statusCodes[status].update;
+
   await boardsService
     .updateBoardById(req.params.id, newBoardData)
-    .then(board =>
-      res
-        .json(board.map(Board.toResponse)[0])
-        .status(status)
-        .set('Content-Type', 'application/json')
-        .end()
-    )
-    .catch(err => {
+    .then(board => {
+      if (board[0] === 404) {
+        res.statusMessage = statusCodes[404];
+        res.status(404).end();
+      } else {
+        res.statusMessage = statusCodes[200].update;
+        res
+          .json(board.map(Board.toResponse))
+          .status(200)
+          .set('Content-Type', 'application/json')
+          .end();
+      }
+    })
+    .catch(() => {
       res.statusMessage = statusCodes[400];
-      res.status(400).end(err);
+      res.status(400).end();
     });
 });
 

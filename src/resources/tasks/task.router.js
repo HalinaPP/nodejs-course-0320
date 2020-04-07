@@ -51,8 +51,7 @@ router.route('/').post(async (req, res) => {
         .set('Content-Type', 'application/json')
         .end()
     )
-    .catch(err => {
-      // console.log(err);
+    .catch(() => {
       res.statusMessage = statusCodes[400];
       res.status(400).end();
     });
@@ -71,7 +70,7 @@ router.route('/:id').put(async (req, res) => {
         .set('Content-Type', 'application/json')
         .end()
     )
-    .catch(err => {
+    .catch(() => {
       res.statusMessage = statusCodes[400];
       res.status(400).end();
     });

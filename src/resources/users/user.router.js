@@ -15,33 +15,49 @@ router.route('/').get(async (req, res) => {
         .set('Content-Type', 'application/json')
         .end()
     )
-    .catch(err => {
-      res.status(400).send(err);
+    .catch(() => {
+      res.status(400).send();
     });
 });
 
 router.route('/:id').get(async (req, res) => {
-  const user = await usersService.getUserById(req.params.id);
-  res.set('Content-Type', 'application/json');
-  res.json(user.map(User.toResponse)[0]);
-  /*
-  if (user[1] === 200) {
-    res.statusMessage = statusCodes[user[1]].all;
-    res
-      .json(user[0].map(User.toResponse)[0])
-      .status(user[1])
-      .end();
-  } else {
-    res.statusMessage = statusCodes[user[1]];
-    res.status(user[1]).end();
-  }*/
+  await usersService
+    .getUserById(req.params.id)
+    .then(user => {
+      if (user[0] === 404) {
+        res.statusMessage = statusCodes[404];
+        res.status(404).end();
+      } else {
+        res.statusMessage = statusCodes[200];
+        res
+          .json(user.map(User.toResponse)[0])
+          .status(status)
+          .set('Content-Type', 'application/json')
+          .end();
+      }
+    })
+    .catch(() => {
+      res.statusMessage = statusCodes[400];
+      res.status(400).end();
+    });
 });
 
 router.route('/').post(async (req, res) => {
   const newUser = req.body;
-  const user = await usersService.setUser(newUser);
-  res.set('Content-Type', 'application/json');
-  res.json(user.map(User.toResponse)[0]);
+  await usersService
+    .setUser(newUser)
+    .then(user => {
+      res.statusMessage = statusCodes[200].update;
+      res
+        .json(user.map(User.toResponse)[0])
+        .status(status)
+        .set('Content-Type', 'application/json')
+        .end();
+    })
+    .catch(() => {
+      res.statusMessage = statusCodes[400];
+      res.status(400).end();
+    });
 });
 
 router.route('/:id').put(async (req, res) => {
@@ -50,7 +66,7 @@ router.route('/:id').put(async (req, res) => {
   await usersService
     .updateUserById(req.params.id, newUserData)
     .then(user => {
-      if (user === 404) {
+      if (user[0] === 404) {
         res.statusMessage = statusCodes[404];
         res.status(404).end();
       } else {
@@ -62,9 +78,9 @@ router.route('/:id').put(async (req, res) => {
           .end();
       }
     })
-    .catch(err => {
+    .catch(() => {
       res.statusMessage = statusCodes[400];
-      res.status(400).end(err);
+      res.status(400).end();
     });
 });
 

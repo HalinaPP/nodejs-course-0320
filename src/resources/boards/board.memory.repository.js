@@ -47,11 +47,10 @@ const getBoardById = async id => {
   const currentBoard = data.find(board => {
     return board.id === id;
   });
-  let statusCode = 200;
   if (currentBoard === undefined) {
-    statusCode = 404;
+    return [404];
   }
-  return [currentBoard, statusCode];
+  return [currentBoard];
 };
 
 const createBoard = async boardData => {
@@ -70,23 +69,16 @@ const updateBoardById = async (id, boardData) => {
   const boardIndex = data.findIndex(board => {
     return board.id === id;
   });
-  let statusCode;
   if (boardIndex === -1) {
-    statusCode = 404;
-    return [statusCode];
+    return [404];
   }
-  try {
-    boardData.id = id;
-    data.splice(boardIndex, 1, boardData);
-    const newBoard = data.find(board => {
-      return board.id === id;
-    });
-    return [200, newBoard];
-  } catch (error) {
-    // console.log(`err=${error}`);
-    statusCode = 400;
-    return [statusCode];
-  }
+
+  boardData.id = id;
+  data.splice(boardIndex, 1, boardData);
+  const newBoard = data.find(board => {
+    return board.id === id;
+  });
+  return [newBoard];
 };
 
 const deleteBoardById = async id => {
