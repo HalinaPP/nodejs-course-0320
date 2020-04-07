@@ -70,12 +70,23 @@ const updateBoardById = async (id, boardData) => {
   const boardIndex = data.findIndex(board => {
     return board.id === id;
   });
-  boardData.id = id;
-  data.splice(boardIndex, 1, boardData);
-  const newBoard = data.find(board => {
-    return board.id === id;
-  });
-  return [newBoard];
+  let statusCode;
+  if (boardIndex === -1) {
+    statusCode = 404;
+    return [statusCode];
+  }
+  try {
+    boardData.id = id;
+    data.splice(boardIndex, 1, boardData);
+    const newBoard = data.find(board => {
+      return board.id === id;
+    });
+    return [200, newBoard];
+  } catch (error) {
+    // console.log(`err=${error}`);
+    statusCode = 400;
+    return [statusCode];
+  }
 };
 
 const deleteBoardById = async id => {

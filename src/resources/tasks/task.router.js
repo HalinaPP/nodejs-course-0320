@@ -5,24 +5,9 @@ const statusCodes = require('./task.constants.js');
 
 router.route('/').get(async (req, res) => {
   const boardId = req.params.boardId;
-  // console.log(`boar=${boardId}`);
   const status = 200;
   res.statusMessage = statusCodes[status].all;
   const tasks = await tasksService.getAll(boardId);
-  //  console.log(`len=${tasks.length}`);
-  /*  await tasksService
-    .getAll(boardId)
-    .then(tasks =>
-      res
-        .json(tasks)
-        .status(status)
-        .set('Content-Type', 'application/json')
-        .end()
-    )
-    .catch(err => {
-      console.log(err);
-      res.status(500);
-    });*/
   if (tasks[1] === 200) {
     res.statusMessage = statusCodes[tasks[1]].all;
     res

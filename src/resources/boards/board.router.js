@@ -2,7 +2,6 @@ const router = require('express').Router();
 const Board = require('./board.model');
 const boardsService = require('./board.service');
 const statusCodes = require('./board.constants.js');
-/** mergeParams */
 
 router.route('/').get(async (req, res) => {
   const status = 200;
@@ -17,8 +16,7 @@ router.route('/').get(async (req, res) => {
         .end()
     )
     .catch(err => {
-      // console.log(err);
-      res.status(500);
+      res.status(400).send(err);
     });
 });
 
@@ -72,7 +70,7 @@ router.route('/:id').put(async (req, res) => {
     )
     .catch(err => {
       res.statusMessage = statusCodes[400];
-      res.status(400).end();
+      res.status(400).end(err);
     });
 });
 

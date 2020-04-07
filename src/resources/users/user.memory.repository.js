@@ -22,7 +22,11 @@ const getUserById = async id => {
   const currentUser = data.find(user => {
     return user.id === id;
   });
-  return [currentUser];
+  let statusCode = 200;
+  if (currentUser === undefined) {
+    statusCode = 404;
+  }
+  return [currentUser, statusCode];
 };
 
 const setUser = async userData => {
@@ -35,6 +39,10 @@ const updateUserById = async (id, userData) => {
   const userIndex = data.findIndex(user => {
     return user.id === id;
   });
+  if (userIndex === -1) {
+    // statusCode = 404;
+    return [404];
+  }
   userData.id = id;
   data.splice(userIndex, 1, userData);
   const newUser = data.find(user => {

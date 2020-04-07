@@ -29,15 +29,11 @@ const data = [
   }
 ];
 const getAll = async boardId => {
-  // console.log(`b2=${boardId}`);
   const tasks = data.filter(task => {
-    //  console.log(`tqq=${task}`);
     return task.boardId === boardId;
   });
-  // const tasks = data;
   let statusCode = 200;
-  // console.log(`t=${tasks}`);
-  if (tasks === undefined) {
+  if (tasks === undefined || tasks.length === 0) {
     statusCode = 404;
   }
   return [tasks, statusCode];
