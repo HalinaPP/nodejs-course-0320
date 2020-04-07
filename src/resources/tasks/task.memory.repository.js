@@ -32,22 +32,22 @@ const getAll = async boardId => {
   const tasks = data.filter(task => {
     return task.boardId === boardId;
   });
-  let statusCode = 200;
+
   if (tasks === undefined || tasks.length === 0) {
-    statusCode = 404;
+    return [404];
   }
-  return [tasks, statusCode];
+  return [tasks];
 };
 
 const getTaskById = async (id, boardId) => {
   const currentTask = data.find(task => {
     return task.id === id && task.boardId === boardId;
   });
-  let statusCode = 200;
+
   if (currentTask === undefined) {
-    statusCode = 404;
+    return [404];
   }
-  return [currentTask, statusCode];
+  return [currentTask];
 };
 
 const createTask = async (taskData, boardId) => {
@@ -61,6 +61,9 @@ const updateTaskById = async (id, taskData, boardId) => {
   const taskIndex = data.findIndex(task => {
     return task.id === id && task.boardId === boardId;
   });
+  if (taskIndex === -1) {
+    return [404];
+  }
   taskData.id = id;
   data.splice(taskIndex, 1, taskData);
   const newTask = data.find(task => {
@@ -92,15 +95,12 @@ const deleteTaskByBoardId = async boardId => {
   let statusCode;
   try {
     for (let i = data.length - 1; i >= 0; i--) {
-      //  console.log(`boardId=${boardId}`);
       if (data[i].boardId === boardId) {
-        //   console.log(`boardDel=${data[i].id} i=${i}`);
         data.splice(i, 1);
       }
     }
     statusCode = 204;
   } catch (error) {
-    // console.log(`err=${error}`);
     statusCode = 400;
   }
   return statusCode;
@@ -116,7 +116,6 @@ const deleteUserInTask = async userId => {
     });
     statusCode = 200;
   } catch (error) {
-    // console.log(`err=${error}`);
     statusCode = 400;
   }
   return statusCode;

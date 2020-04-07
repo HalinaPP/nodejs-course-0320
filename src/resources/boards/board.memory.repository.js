@@ -95,7 +95,6 @@ const deleteBoardById = async id => {
     data.splice(boardIndex, 1);
     statusCode = statusCode === 400 ? statusCode : 204;
   } catch (error) {
-    // console.log(`err=${error}`);
     statusCode = 400;
   }
   return statusCode;

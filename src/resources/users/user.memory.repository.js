@@ -63,7 +63,6 @@ const deleteUserById = async id => {
     data.splice(userIndex, 1);
     statusCode = statusCode === 200 ? 204 : 400;
   } catch (error) {
-    // console.log(`err=${error}`);
     statusCode = 400;
   }
   return statusCode;
