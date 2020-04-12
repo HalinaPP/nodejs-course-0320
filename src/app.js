@@ -21,8 +21,7 @@ app.use(
     }
   )
 );
-/* app.use(morgan('combined', { stream: winston.stream }));
- */
+
 app.use(express.json());
 
 app.use('/doc', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
@@ -50,9 +49,7 @@ boardRouter.use(
 app.use('*', (req, res) => {
   throw new ErrorHandler(400, 'Bad request');
 });
-/* app.use('/error', (req, res) => {
-  throw new ErrorHandler(500, 'My Internal server error');
-});*/
+
 app.use((err, req, res, next) => {
   handleError(err, res);
 
@@ -60,7 +57,6 @@ app.use((err, req, res, next) => {
   const bodyJ = JSON.stringify(body);
   const str = JSON.stringify(query);
   const headers = res.getHeaders();
-  //  const timeForRes = (Date.now() - timeResB) / 1000;
   logger.error(
     `${method} ${res.statusCode} ${url} query=${str} body=${bodyJ} size ${headers['content-length']} `
   );
@@ -73,7 +69,6 @@ process
   })
   .on('uncaughtException', (error, origin) => {
     logger.error(`Uncaught Exception: ${error}`);
-    // winston.error(`Uncaught Exception origin:  ${origin}`);
     logger.on('finish', () => exit(1));
   });
 
