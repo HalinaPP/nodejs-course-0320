@@ -20,6 +20,7 @@ router
         throw new ErrorHandler(404, statusCodes[404]);
       } else {
         res.statusMessage = statusCodes[200].all;
+        res.contentType = 'application/json';
         res
           .json(tasks[0])
           .status(200)
@@ -38,8 +39,10 @@ router
         throw new ErrorHandler(400, statusCodes[400]);
       }
 
-      res.statusMessage = statusCodes[200].create;
       const task = await tasksService.createTask(newTask, boardId);
+
+      res.statusMessage = statusCodes[200].create;
+      res.contentType = 'application/json';
       res
         .json(task[0])
         .status(200)
@@ -65,6 +68,7 @@ router
         throw new ErrorHandler(404, statusCodes[404]);
       } else {
         res.statusMessage = statusCodes[200].all;
+        res.contentType = 'application/json';
         res
           .json(task[0])
           .status(200)
@@ -94,6 +98,7 @@ router
         throw new ErrorHandler(404, statusCodes[404]);
       } else {
         res.statusMessage = statusCodes[200].update;
+        res.contentType = 'application/json';
         res
           .json(task.map(Task.toResponse)[0])
           .status(200)

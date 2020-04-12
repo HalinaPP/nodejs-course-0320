@@ -19,16 +19,7 @@ const handleError = (err, res) => {
   });
 };
 
-const catchErrors = fn => async (res, req, next) => {
-  try {
-    return await fn(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-};
-
 module.exports = {
   ErrorHandler,
-  handleError,
-  catchErrors
+  handleError
 };

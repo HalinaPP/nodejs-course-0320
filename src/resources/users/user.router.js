@@ -5,29 +5,6 @@ const statusCodes = require('./user.constants.js');
 const { ErrorHandler } = require('./../../helpers/errorHandler');
 const { isUUID } = require('./../../helpers/validator');
 
-/* const catchErrors = fn => async (res, req, next) => {
-  try {
-    return await fn(req, res, next);
-  } catch (error) {
-    return next(error);
-  }
-};
-const fun = async (req, res) => {
-  const userId = req.params.id;
-  console.log('not');
-  if (!userId || !isUUID(userId)) {
-    console.log('not');
-    throw new ErrorHandler(400, statusCodes[400]);
-  }
-  const statusNum = await usersService.deleteUserById(userId);
-  if (statusNum === 404) {
-    console.log('notw');
-    throw new ErrorHandler(404, statusCodes[404]);
-  } else {
-    res.statusMessage = statusCodes[statusNum];
-    res.status(statusNum).end();
-  }
-};*/
 router
   .route('/')
   .get(async (req, res, next) => {
@@ -52,10 +29,9 @@ router
       res.contentType = 'application/json';
       res
         .json(user.map(User.toResponse)[0])
-        .status(status)
+        .status(200)
         .end();
     } catch (error) {
-      res.statusMessage = statusCodes[400];
       next(error);
     }
   });

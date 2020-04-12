@@ -1,19 +1,6 @@
 const uuid = require('uuid');
 const data = require('../../data/data.json').users;
-/* const data = [
-  {
-    id: uuid(),
-    name: 'Garold',
-    login: 'garold12',
-    password: '12345'
-  },
-  {
-    id: uuid(),
-    name: 'Midel',
-    login: 'midel14',
-    password: '123456'
-  }
-];*/
+
 const getAll = async () => {
   return data;
 };

@@ -12,6 +12,7 @@ router
     res.contentType = 'application/json';
     try {
       const boards = await boardsService.getAll();
+      res.contentType = 'application/json';
       res
         .json(boards)
         .status(200)
@@ -39,6 +40,25 @@ router
 
 router
   .route('/:id')
+  .get(async (req, res, next) => {
+    try {
+      const board = await boardsService.getBoardById(req.params.id);
+
+      if (!board[0]) {
+        throw new ErrorHandler(404, statusCodes[404]);
+      } else {
+        res.statusMessage = statusCodes[200].all;
+        res.contentType = 'application/json';
+        res
+          .json(board[0])
+          .status(200)
+          .end();
+      }
+    } catch (error) {
+      next(error);
+    }
+  })
+
   .put(async (req, res, next) => {
     try {
       const newBoardData = req.body;
@@ -87,25 +107,4 @@ router
     }
   });
 
-router.route('/:id').get(async (req, res) => {
-  await boardsService
-    .getBoardById(req.params.id)
-    .then(board => {
-      if (board[0] === 404) {
-        res.statusMessage = statusCodes[404];
-        res.status(404).end();
-      } else {
-        res.statusMessage = statusCodes[200].all;
-        res
-          .json(board[0])
-          .status(200)
-          .set('Content-Type', 'application/json')
-          .end();
-      }
-    })
-    .catch(() => {
-      res.statusMessage = statusCodes[400];
-      res.status(400).end();
-    });
-});
 module.exports = router;

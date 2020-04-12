@@ -1,45 +1,6 @@
 const uuid = require('uuid');
 const data = require('../../data/data.json').boards;
-/*
-const data = [
-  {
-    id: uuid(),
-    title: 'Board1',
-    columns: [
-      {
-        id: uuid(),
-        title: 'to do smth',
-        order: 0
-      },
-      {
-        id: uuid(),
-        title: 'in progress',
-        order: 1
-      },
-      {
-        id: uuid(),
-        title: 'done',
-        order: 2
-      }
-    ]
-  },
-  {
-    id: uuid(),
-    title: 'Board2',
-    columns: [
-      {
-        id: uuid(),
-        title: 'describe',
-        order: 0
-      },
-      {
-        id: uuid(),
-        title: 'draw',
-        order: 1
-      }
-    ]
-  }
-];*/
+
 const getAll = async () => {
   return data;
 };
@@ -48,9 +9,7 @@ const getBoardById = async id => {
   const currentBoard = data.find(board => {
     return board.id === id;
   });
-  if (currentBoard === undefined) {
-    return [404];
-  }
+
   return [currentBoard];
 };
 

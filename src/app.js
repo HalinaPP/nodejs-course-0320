@@ -6,7 +6,6 @@ const userRouter = require('./resources/users/user.router');
 const boardRouter = require('./resources/boards/board.router');
 const taskRouter = require('./resources/tasks/task.router');
 const { ErrorHandler, handleError } = require('./helpers/errorHandler');
-const { validate } = require('./helpers/validator');
 const { exit } = process;
 
 const app = express();
@@ -35,7 +34,6 @@ app.use('/', (req, res, next) => {
 });
 
 console.log('Working');
-// const timeResB = Date.now();
 app.use('/users', userRouter);
 app.use('/boards', boardRouter);
 boardRouter.use(
@@ -63,17 +61,17 @@ app.use((err, req, res, next) => {
 });
 
 process
-  .on('unhandledRejection', (reason, promise) => {
+  .on('unhandledRejection', reason => {
     logger.error(`Unhandled Rejection at Promise: ${reason.message}`);
     logger.on('finish', () => exit(1));
   })
-  .on('uncaughtException', (error, origin) => {
+  .on('uncaughtException', error => {
     logger.error(`Uncaught Exception: ${error}`);
     logger.on('finish', () => exit(1));
   });
 
 // PUT IT HERE for Review
 // throw Error('Oops!');
-// Promise.reject(Error('Oops!'));
+Promise.reject(Error('Oops!'));
 
 module.exports = app;

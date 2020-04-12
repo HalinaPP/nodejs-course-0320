@@ -1,35 +1,6 @@
 const uuid = require('uuid');
 const data = require('../../data/data.json').tasks;
-/* const data = [
-  {
-    id: uuid(),
-    title: 'Task1',
-    order: 0,
-    description: 'about Task1',
-    userId: '3dce4430-895c-463e-b5e2-ae8f23f425f5',
-    boardId: '79340640-e1a1-486e-8131-51082db4c6cf',
-    columnId: '0'
-  },
-  {
-    id: uuid(),
-    title: 'Task5',
-    order: 1,
-    description: 'about Task5',
-    userId: '67ce4430-895c-463e-b5e2-ae8f23f425f5',
-    boardId: '79340640-e1a1-486e-8131-51082db4c6cf',
-    columnId: '2'
-  },
-  {
-    id: uuid(),
-    title: 'Task2',
-    order: 2,
-    description: 'about Task2',
-    userId: '67ce4430-895c-463e-b5e2-ae8f23f425f5',
-    boardId: 'de6424eb-8404-4992-be53-1204686c6d2e',
-    columnId: '1'
-  }
-];
-*/
+
 const getAll = async boardId => {
   const tasks = data.filter(task => {
     return task.boardId === boardId;
