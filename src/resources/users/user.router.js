@@ -49,10 +49,10 @@ router
       const newUser = req.body;
       const user = await usersService.setUser(newUser);
       res.statusMessage = statusCodes[200].update;
+      res.contentType = 'application/json';
       res
         .json(user.map(User.toResponse)[0])
         .status(status)
-        .set('Content-Type', 'application/json')
         .end();
     } catch (error) {
       res.statusMessage = statusCodes[400];
@@ -74,7 +74,7 @@ router
       if (!user[0]) {
         throw new ErrorHandler(404, statusCodes[404]);
       } else {
-        res.statusMessage = statusCodes[200];
+        res.statusMessage = statusCodes[200].all;
         res.contentType = 'application/json';
         res
           .json(user.map(User.toResponse)[0])

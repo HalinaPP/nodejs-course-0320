@@ -69,12 +69,12 @@ app.use((err, req, res, next) => {
 process
   .on('unhandledRejection', (reason, promise) => {
     logger.error(`Unhandled Rejection at Promise: ${reason.message}`);
-    // exit(1);
+    logger.on('finish', () => exit(1));
   })
   .on('uncaughtException', (error, origin) => {
     logger.error(`Uncaught Exception: ${error}`);
     // winston.error(`Uncaught Exception origin:  ${origin}`);
-    // process.exit(1);
+    logger.on('finish', () => exit(1));
   });
 
 // PUT IT HERE for Review

@@ -1,5 +1,6 @@
 const uuid = require('uuid');
-const data = [
+const data = require('../../data/data.json').tasks;
+/* const data = [
   {
     id: uuid(),
     title: 'Task1',
@@ -28,14 +29,12 @@ const data = [
     columnId: '1'
   }
 ];
+*/
 const getAll = async boardId => {
   const tasks = data.filter(task => {
     return task.boardId === boardId;
   });
 
-  if (tasks === undefined || tasks.length === 0) {
-    return [404];
-  }
   return [tasks];
 };
 
@@ -44,9 +43,6 @@ const getTaskById = async (id, boardId) => {
     return task.id === id && task.boardId === boardId;
   });
 
-  if (currentTask === undefined) {
-    return [404];
-  }
   return [currentTask];
 };
 
@@ -62,7 +58,7 @@ const updateTaskById = async (id, taskData, boardId) => {
     return task.id === id && task.boardId === boardId;
   });
   if (taskIndex === -1) {
-    return [404];
+    return [];
   }
   taskData.id = id;
   data.splice(taskIndex, 1, taskData);
@@ -85,7 +81,6 @@ const deleteTaskById = async (id, boardId) => {
     data.splice(taskIndex, 1);
     statusCode = 204;
   } catch (error) {
-    // console.log(`err=${error}`);
     statusCode = 400;
   }
   return statusCode;

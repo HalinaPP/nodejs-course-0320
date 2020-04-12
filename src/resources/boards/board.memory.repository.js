@@ -1,5 +1,6 @@
 const uuid = require('uuid');
-
+const data = require('../../data/data.json').boards;
+/*
 const data = [
   {
     id: uuid(),
@@ -38,7 +39,7 @@ const data = [
       }
     ]
   }
-];
+];*/
 const getAll = async () => {
   return data;
 };
@@ -70,7 +71,7 @@ const updateBoardById = async (id, boardData) => {
     return board.id === id;
   });
   if (boardIndex === -1) {
-    return [404];
+    return [];
   }
 
   boardData.id = id;

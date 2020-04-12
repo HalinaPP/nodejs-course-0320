@@ -35,14 +35,7 @@ const { createLogger, format, transports } = require('winston');
     colorize: true
   }
 };
-/*
-const logger = new createLogger({
-  transports: [
-    // new transports.File(options.file),
-    new transports.File(options.file),
-    new transports.Console(options.console)
-  ]*/
-
+*/
 const logger = new createLogger({
   transports: [
     new transports.Console({
@@ -61,17 +54,6 @@ const logger = new createLogger({
     })
   ]
 });
-
-/*
-const logger = new winston.Logger({
-  transports: [
-    new winston.transports.File(options.file),
-    new winston.transports.Console(options.console)
-  ],
-  exitOnError: false // do not exit on handled exceptions
-});
-*/
-
 logger.stream = {
   write(message, encoding) {
     logger.info(message);
