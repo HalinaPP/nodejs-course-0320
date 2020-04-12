@@ -1,5 +1,5 @@
 const uuid = require('uuid');
-const tasks = require('../tasks/task.memory.repository.js');
+
 const data = [
   {
     id: uuid(),
@@ -22,9 +22,6 @@ const getUserById = async id => {
   const currentUser = data.find(user => {
     return user.id === id;
   });
-  if (currentUser === undefined) {
-    return [404];
-  }
   return [currentUser];
 };
 
@@ -39,7 +36,7 @@ const updateUserById = async (id, userData) => {
     return user.id === id;
   });
   if (userIndex === -1) {
-    return [404];
+    return [];
   }
   userData.id = id;
   data.splice(userIndex, 1, userData);
@@ -59,9 +56,8 @@ const deleteUserById = async id => {
     return statusCode;
   }
   try {
-    statusCode = await tasks.deleteUserInTask(id);
     data.splice(userIndex, 1);
-    statusCode = statusCode === 200 ? 204 : 400;
+    statusCode = 204;
   } catch (error) {
     statusCode = 400;
   }

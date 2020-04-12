@@ -1,5 +1,5 @@
 const uuid = require('uuid');
-const tasks = require('../tasks/task.memory.repository.js');
+
 const data = [
   {
     id: uuid(),
@@ -91,9 +91,8 @@ const deleteBoardById = async id => {
     return statusCode;
   }
   try {
-    statusCode = await tasks.deleteTaskByBoardId(id);
     data.splice(boardIndex, 1);
-    statusCode = statusCode === 400 ? statusCode : 204;
+    statusCode = 204;
   } catch (error) {
     statusCode = 400;
   }
