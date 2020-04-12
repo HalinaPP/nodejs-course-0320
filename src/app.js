@@ -72,6 +72,6 @@ process
 
 // PUT IT HERE for Review
 // throw Error('Oops!');
-Promise.reject(Error('Oops!'));
+// Promise.reject(Error('Oops!'));
 
 module.exports = app;
