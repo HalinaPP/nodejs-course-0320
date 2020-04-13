@@ -29,7 +29,14 @@ const logger = new createLogger({
 });
 logger.stream = {
   write(message, encoding) {
-    logger.info(message);
+    let status;
+    const mesChunk = message.split(' ');
+    status = mesChunk[1];
+    if (status >= 400) {
+      logger.error(message);
+    } else {
+      logger.info(message);
+    }
   }
 };
 
