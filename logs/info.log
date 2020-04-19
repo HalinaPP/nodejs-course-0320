@@ -1,0 +1,5 @@
+{
+  message: 'Unhandled Rejection at Promise: Cannot create collection test.users - database is in the process of being dropped.',
+  level: 'error',
+  timestamp: '2020-04-19T19:38:26.775Z'
+}
