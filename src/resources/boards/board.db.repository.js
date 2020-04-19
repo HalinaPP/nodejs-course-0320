@@ -10,15 +10,6 @@ const getBoardById = async id => {
 
 const createBoard = async boardData => {
   return Board.create(boardData);
-  // boardData.id = uuid();
-  /* const columns = boardData.columns.map(element => {
-    element.id = uuid();
-    const { id, title, order } = element;
-    return { id, title, order };
-  });
-  boardData.columns = columns;
-  data.push(boardData);
-  return [boardData];*/
 };
 
 const updateBoardById = async (id, boardData) => {

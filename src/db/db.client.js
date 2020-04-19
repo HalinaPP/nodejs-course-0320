@@ -64,39 +64,7 @@ const tasks = [
     columnId: '9676269f-3fd2-43cb-8eb9-9477eba5d902'
   })
 ];
-/*
-const tasks = [
-  new Task(
-    {
-      title: 'Task1',
-      // order: 0,
-      description:
-        'about Task1' /* ,
-      userId: '3dce4430-895c-463e-b5e2-ae8f23f425f5',
-      boardId: '79340640-e1a1-486e-8131-51082db4c6cf',
-      columnId: 'ac6424eb-8784-4992-be53-1204686c6d2e'
-    },
-    {
-      title: 'Task5',
-      // order: 1,
-      description:
-        'about Task5' /* ,
-      userId: '0c5c99e1-b78b-4d48-a4a9-266a84c5aa42',
-      boardId: '79340640-e1a1-486e-8131-51082db4c6cf',
-      columnId: 'ac6424eb-8784-4992-be53-1204686c6d2e2'
-    },
-    {
-      title: 'Task2',
-      // order: 2,
-      description:
-        'about Task2' /* ,
-      userId: '0c5c99e1-b78b-4d48-a4a9-266a84c5aa42',
-      boardId: 'de6424eb-8404-4992-be53-1204686c6d2e',
-      columnId: '126424eb-ac04-4992-be53-1204686c6d2e'
-    }
-  )
-];
-*/
+
 const connectToDB = cb => {
   mongoose.connect(MONGO_CONNECTION_STRING, {
     useNewUrlParser: true,

@@ -14,18 +14,17 @@ router
         throw new ErrorHandler(400, statusCodes[400]);
       }
 
-      await tasksService.getAll(boardId).then(tasks => {
-        if (!tasks) {
-          throw new ErrorHandler(404, statusCodes[404]);
-        } else {
-          res.statusMessage = statusCodes[200].all;
-          res.contentType = 'application/json';
-          res
-            .json(tasks.map(Task.toResponse))
-            .status(200)
-            .end();
-        }
-      });
+      const tasks = await tasksService.getAll(boardId);
+      if (!tasks) {
+        throw new ErrorHandler(404, statusCodes[404]);
+      } else {
+        res.statusMessage = statusCodes[200].all;
+        res.contentType = 'application/json';
+        res
+          .json(tasks.map(Task.toResponse))
+          .status(200)
+          .end();
+      }
     } catch (error) {
       next(error);
     }
@@ -58,24 +57,21 @@ router
     try {
       const boardId = req.params.boardId;
       const taskId = req.params.id;
-      //  console.log(`t=${taskId} b=${boardId}`);
       if (!boardId || !isUUID(boardId) || !taskId || !isUUID(taskId)) {
         throw new ErrorHandler(400, statusCodes[400]);
       }
 
-      await tasksService.getTaskById(taskId, boardId).then(task => {
-        // console.log(`t=${task}`);
-        if (!task) {
-          throw new ErrorHandler(404, statusCodes[404]);
-        } else {
-          res.statusMessage = statusCodes[200].all;
-          res.contentType = 'application/json';
-          res
-            .json(Task.toResponse(task[0]))
-            .status(200)
-            .end();
-        }
-      });
+      const task = await tasksService.getTaskById(taskId, boardId);
+      if (!task) {
+        throw new ErrorHandler(404, statusCodes[404]);
+      } else {
+        res.statusMessage = statusCodes[200].all;
+        res.contentType = 'application/json';
+        res
+          .json(Task.toResponse(task))
+          .status(200)
+          .end();
+      }
     } catch (error) {
       next(error);
     }
@@ -102,7 +98,7 @@ router
         res.statusMessage = statusCodes[200].update;
         res.contentType = 'application/json';
         res
-          .json(Task.toResponse(task[0]))
+          .json(Task.toResponse(task))
           .status(200)
           .end();
       }

@@ -42,7 +42,6 @@ router
   .get(async (req, res, next) => {
     try {
       const userId = req.params.id;
-      await console.log('us11=');
       if (!userId || !isUUID(userId)) {
         throw new ErrorHandler(400, statusCodes[400]);
       }
@@ -84,7 +83,7 @@ router
           .end();
       }
     } catch (error) {
-      next(error);
+      return next(error);
     }
   })
 
