@@ -14,7 +14,7 @@ router
       const boards = await boardsService.getAll();
       res.contentType = 'application/json';
       res
-        .json(boards)
+        .json(boards.map(Board.toResponse))
         .status(200)
         .end();
     } catch (error) {
@@ -30,7 +30,7 @@ router
       res.statusMessage = statusCodes[200].create;
       res.contentType = 'application/json';
       res
-        .json(board.map(Board.toResponse)[0])
+        .json(Board.toResponse(board))
         .status(200)
         .end();
     } catch (error) {
@@ -44,13 +44,13 @@ router
     try {
       const board = await boardsService.getBoardById(req.params.id);
 
-      if (!board[0]) {
+      if (!board) {
         throw new ErrorHandler(404, statusCodes[404]);
       } else {
         res.statusMessage = statusCodes[200].all;
         res.contentType = 'application/json';
         res
-          .json(board[0])
+          .json(Board.toResponse(board))
           .status(200)
           .end();
       }
@@ -73,13 +73,13 @@ router
         newBoardData
       );
 
-      if (!board[0]) {
+      if (!board) {
         throw new ErrorHandler(404, statusCodes[404]);
       } else {
         res.statusMessage = statusCodes[200].update;
         res.contentType = 'application/json';
         res
-          .json(board.map(Board.toResponse))
+          .json(Board.toResponse(board))
           .status(200)
           .end();
       }
@@ -94,13 +94,13 @@ router
       if (!boardId || !isUUID(boardId)) {
         throw new ErrorHandler(400, statusCodes[400]);
       }
-      const statusNum = await boardsService.deleteBoardById(boardId);
+      const deleteCount = await boardsService.deleteBoardById(boardId);
 
-      if (statusNum === 404) {
+      if (deleteCount === 0) {
         throw new ErrorHandler(404, statusCodes[404]);
       } else {
-        res.statusMessage = statusCodes[statusNum];
-        res.status(statusNum).end();
+        res.statusMessage = statusCodes[204];
+        res.status(204).end();
       }
     } catch (error) {
       next(error);

@@ -13,10 +13,12 @@ process
 // PUT IT HERE for Review
 // throw Error('Oops!');
 // Promise.reject(Error('Oops!'));
-
+const { connectToDB } = require('./db/db.client');
 const { PORT } = require('./common/config');
 const app = require('./app');
 
-app.listen(PORT, () =>
-  console.log(`App is running on http://localhost:${PORT}`)
-);
+connectToDB(() => {
+  app.listen(PORT, () =>
+    console.log(`App is running on http://localhost:${PORT}`)
+  );
+});

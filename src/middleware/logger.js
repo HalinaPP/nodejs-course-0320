@@ -1,9 +1,9 @@
 const morgan = require('morgan');
-morgan.token('query', (req, res) => {
+morgan.token('query', req => {
   return JSON.stringify(req.query);
 });
 
-morgan.token('body', (req, res) => {
+morgan.token('body', req => {
   return JSON.stringify(req.body);
 });
 
@@ -25,13 +25,13 @@ const logger = new createLogger({
       level: 'info',
       format: format.combine(format.timestamp(), format.prettyPrint())
     })
-  ]
+  ] /* ,
+  exceptionHandlers: [new transports.File({ filename: './logs/error2.log' })]*/
 });
 logger.stream = {
-  write(message, encoding) {
-    let status;
+  write(message) {
     const mesChunk = message.split(' ');
-    status = mesChunk[1];
+    const status = mesChunk[1];
     if (status >= 400) {
       logger.error(message);
     } else {

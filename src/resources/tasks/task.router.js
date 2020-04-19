@@ -14,18 +14,18 @@ router
         throw new ErrorHandler(400, statusCodes[400]);
       }
 
-      const tasks = await tasksService.getAll(boardId);
-
-      if (!tasks[0]) {
-        throw new ErrorHandler(404, statusCodes[404]);
-      } else {
-        res.statusMessage = statusCodes[200].all;
-        res.contentType = 'application/json';
-        res
-          .json(tasks[0])
-          .status(200)
-          .end();
-      }
+      await tasksService.getAll(boardId).then(tasks => {
+        if (!tasks) {
+          throw new ErrorHandler(404, statusCodes[404]);
+        } else {
+          res.statusMessage = statusCodes[200].all;
+          res.contentType = 'application/json';
+          res
+            .json(tasks.map(Task.toResponse))
+            .status(200)
+            .end();
+        }
+      });
     } catch (error) {
       next(error);
     }
@@ -44,7 +44,7 @@ router
       res.statusMessage = statusCodes[200].create;
       res.contentType = 'application/json';
       res
-        .json(task[0])
+        .json(Task.toResponse(task))
         .status(200)
         .end();
     } catch (error) {
@@ -58,22 +58,24 @@ router
     try {
       const boardId = req.params.boardId;
       const taskId = req.params.id;
+      //  console.log(`t=${taskId} b=${boardId}`);
       if (!boardId || !isUUID(boardId) || !taskId || !isUUID(taskId)) {
         throw new ErrorHandler(400, statusCodes[400]);
       }
 
-      const task = await tasksService.getTaskById(taskId, boardId);
-
-      if (!task[0]) {
-        throw new ErrorHandler(404, statusCodes[404]);
-      } else {
-        res.statusMessage = statusCodes[200].all;
-        res.contentType = 'application/json';
-        res
-          .json(task[0])
-          .status(200)
-          .end();
-      }
+      await tasksService.getTaskById(taskId, boardId).then(task => {
+        // console.log(`t=${task}`);
+        if (!task) {
+          throw new ErrorHandler(404, statusCodes[404]);
+        } else {
+          res.statusMessage = statusCodes[200].all;
+          res.contentType = 'application/json';
+          res
+            .json(Task.toResponse(task[0]))
+            .status(200)
+            .end();
+        }
+      });
     } catch (error) {
       next(error);
     }
@@ -94,13 +96,13 @@ router
         boardId
       );
 
-      if (!task[0]) {
+      if (!task) {
         throw new ErrorHandler(404, statusCodes[404]);
       } else {
         res.statusMessage = statusCodes[200].update;
         res.contentType = 'application/json';
         res
-          .json(task.map(Task.toResponse)[0])
+          .json(Task.toResponse(task[0]))
           .status(200)
           .end();
       }
@@ -117,12 +119,12 @@ router
         throw new ErrorHandler(400, statusCodes[400]);
       }
 
-      const statusNum = await tasksService.deleteTaskById(taskId, boardId);
-      if (statusNum === 404) {
+      const deleteCount = await tasksService.deleteTaskById(taskId, boardId);
+      if (deleteCount === 0) {
         throw new ErrorHandler(404, statusCodes[404]);
       } else {
-        res.statusMessage = statusCodes[statusNum];
-        res.status(statusNum).end();
+        res.statusMessage = statusCodes[204];
+        res.status(204).end();
       }
     } catch (error) {
       next(error);

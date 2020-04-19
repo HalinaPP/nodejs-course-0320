@@ -8,10 +8,10 @@ const { isUUID } = require('./../../helpers/validator');
 router
   .route('/')
   .get(async (req, res, next) => {
-    res.statusMessage = statusCodes[200].all;
-    res.contentType = 'application/json';
     try {
       const users = await usersService.getAll();
+      res.statusMessage = statusCodes[200].all;
+      res.contentType = 'application/json';
       res
         .json(users.map(User.toResponse))
         .status(200)
@@ -25,10 +25,11 @@ router
     try {
       const newUser = req.body;
       const user = await usersService.setUser(newUser);
+
       res.statusMessage = statusCodes[200].update;
       res.contentType = 'application/json';
       res
-        .json(user.map(User.toResponse)[0])
+        .json(User.toResponse(user))
         .status(200)
         .end();
     } catch (error) {
@@ -41,19 +42,19 @@ router
   .get(async (req, res, next) => {
     try {
       const userId = req.params.id;
-
+      await console.log('us11=');
       if (!userId || !isUUID(userId)) {
         throw new ErrorHandler(400, statusCodes[400]);
       }
-
       const user = await usersService.getUserById(userId);
-      if (!user[0]) {
+
+      if (!user) {
         throw new ErrorHandler(404, statusCodes[404]);
       } else {
         res.statusMessage = statusCodes[200].all;
         res.contentType = 'application/json';
         res
-          .json(user.map(User.toResponse)[0])
+          .json(User.toResponse(user))
           .status(200)
           .end();
       }
@@ -72,13 +73,13 @@ router
       }
       const user = await usersService.updateUserById(userId, newUserData);
 
-      if (!user[0]) {
+      if (!user) {
         throw new ErrorHandler(404, statusCodes[404]);
       } else {
         res.statusMessage = statusCodes[200].update;
         res.contentType = 'application/json';
         res
-          .json(user.map(User.toResponse))
+          .json(User.toResponse(user))
           .status(200)
           .end();
       }
@@ -94,12 +95,14 @@ router
       if (!userId || !isUUID(userId)) {
         throw new ErrorHandler(400, statusCodes[400]);
       }
-      const statusNum = await usersService.deleteUserById(userId);
-      if (statusNum === 404) {
+
+      const deleteCount = await usersService.deleteUserById(userId);
+
+      if (deleteCount === 0) {
         throw new ErrorHandler(404, statusCodes[404]);
       } else {
-        res.statusMessage = statusCodes[statusNum];
-        res.status(statusNum).end();
+        res.statusMessage = statusCodes[204];
+        res.status(204).end();
       }
     } catch (error) {
       next(error);
