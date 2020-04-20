@@ -6,7 +6,7 @@ class ErrorHandler extends Error {
   }
 }
 
-const handleError = (err, res) => {
+const returnError = (err, res) => {
   let { statusCode, message } = err;
   if (!statusCode) {
     statusCode = 500;
@@ -19,7 +19,16 @@ const handleError = (err, res) => {
   });
 };
 
+const catchError = fn => async (req, res, next) => {
+  try {
+    await fn(req, res, next);
+  } catch (error) {
+    return next(error);
+  }
+};
+
 module.exports = {
   ErrorHandler,
-  handleError
+  returnError,
+  catchError
 };

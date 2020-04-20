@@ -2,13 +2,13 @@ const router = require('express').Router();
 const User = require('./user.model');
 const usersService = require('./user.service');
 const statusCodes = require('./user.constants.js');
-const { ErrorHandler } = require('./../../helpers/errorHandler');
+const { ErrorHandler, catchError } = require('./../../helpers/errorHandler');
 const { isUUID } = require('./../../helpers/validator');
 
 router
   .route('/')
-  .get(async (req, res, next) => {
-    try {
+  .get(
+    catchError(async (req, res, next) => {
       const users = await usersService.getAll();
       res.statusMessage = statusCodes[200].all;
       res.contentType = 'application/json';
@@ -16,13 +16,12 @@ router
         .json(users.map(User.toResponse))
         .status(200)
         .end();
-    } catch (error) {
-      next(error);
-    }
-  })
+      next();
+    })
+  )
 
-  .post(async (req, res, next) => {
-    try {
+  .post(
+    catchError(async (req, res, next) => {
       const newUser = req.body;
       const user = await usersService.setUser(newUser);
 
@@ -32,10 +31,9 @@ router
         .json(User.toResponse(user))
         .status(200)
         .end();
-    } catch (error) {
-      next(error);
-    }
-  });
+      next();
+    })
+  );
 
 router
   .route('/:id')
