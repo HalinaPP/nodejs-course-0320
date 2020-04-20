@@ -2,28 +2,27 @@ const router = require('express').Router();
 const Board = require('./board.model');
 const boardsService = require('./board.service');
 const statusCodes = require('./board.constants.js');
-const { ErrorHandler } = require('./../../helpers/errorHandler');
+const { ErrorHandler, catchError } = require('./../../helpers/errorHandler');
 const { isUUID } = require('./../../helpers/validator');
 
 router
   .route('/')
-  .get(async (req, res, next) => {
-    res.statusMessage = statusCodes[200].all;
-    res.contentType = 'application/json';
-    try {
+  .get(
+    catchError(async (req, res, next) => {
       const boards = await boardsService.getAll();
+
+      res.statusMessage = statusCodes[200].all;
       res.contentType = 'application/json';
       res
         .json(boards.map(Board.toResponse))
         .status(200)
         .end();
-    } catch (error) {
-      next(error);
-    }
-  })
+      next();
+    })
+  )
 
-  .post(async (req, res, next) => {
-    try {
+  .post(
+    catchError(async (req, res, next) => {
       const newBoard = req.body;
       const board = await boardsService.createBoard(newBoard);
 
@@ -33,15 +32,14 @@ router
         .json(Board.toResponse(board))
         .status(200)
         .end();
-    } catch (error) {
-      next(error);
-    }
-  });
+      next();
+    })
+  );
 
 router
   .route('/:id')
-  .get(async (req, res, next) => {
-    try {
+  .get(
+    catchError(async (req, res, next) => {
       const board = await boardsService.getBoardById(req.params.id);
 
       if (!board) {
@@ -54,13 +52,12 @@ router
           .status(200)
           .end();
       }
-    } catch (error) {
-      next(error);
-    }
-  })
+      next();
+    })
+  )
 
-  .put(async (req, res, next) => {
-    try {
+  .put(
+    catchError(async (req, res, next) => {
       const newBoardData = req.body;
       const boardId = req.params.id;
 
@@ -83,12 +80,12 @@ router
           .status(200)
           .end();
       }
-    } catch (error) {
-      next(error);
-    }
-  })
-  .delete(async (req, res, next) => {
-    try {
+      next();
+    })
+  )
+
+  .delete(
+    catchError(async (req, res, next) => {
       const boardId = req.params.id;
 
       if (!boardId || !isUUID(boardId)) {
@@ -102,9 +99,8 @@ router
         res.statusMessage = statusCodes[204];
         res.status(204).end();
       }
-    } catch (error) {
-      next(error);
-    }
-  });
+      next();
+    })
+  );
 
 module.exports = router;

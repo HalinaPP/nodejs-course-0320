@@ -41,11 +41,8 @@ boardRouter.use(
   taskRouter
 );
 
-app.use('*', (req, res) => {
-  throw new ErrorHandler(400, 'Bad request');
-});
-
 app.use((err, req, res, next) => {
   returnError(err, res);
+  next();
 });
 module.exports = app;

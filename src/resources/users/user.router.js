@@ -37,8 +37,8 @@ router
 
 router
   .route('/:id')
-  .get(async (req, res, next) => {
-    try {
+  .get(
+    catchError(async (req, res, next) => {
       const userId = req.params.id;
       if (!userId || !isUUID(userId)) {
         throw new ErrorHandler(400, statusCodes[400]);
@@ -55,13 +55,12 @@ router
           .status(200)
           .end();
       }
-    } catch (error) {
-      next(error);
-    }
-  })
+      next();
+    })
+  )
 
-  .put(async (req, res, next) => {
-    try {
+  .put(
+    catchError(async (req, res, next) => {
       const newUserData = req.body;
       const userId = req.params.id;
 
@@ -80,13 +79,12 @@ router
           .status(200)
           .end();
       }
-    } catch (error) {
-      return next(error);
-    }
-  })
+      next();
+    })
+  )
 
-  .delete(async (req, res, next) => {
-    try {
+  .delete(
+    catchError(async (req, res, next) => {
       const userId = req.params.id;
 
       if (!userId || !isUUID(userId)) {
@@ -101,9 +99,8 @@ router
         res.statusMessage = statusCodes[204];
         res.status(204).end();
       }
-    } catch (error) {
-      next(error);
-    }
-  });
+      next();
+    })
+  );
 
 module.exports = router;
