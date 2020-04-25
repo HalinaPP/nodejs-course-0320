@@ -5,15 +5,20 @@ const YAML = require('yamljs');
 const userRouter = require('./resources/users/user.router');
 const boardRouter = require('./resources/boards/board.router');
 const taskRouter = require('./resources/tasks/task.router');
-const { ErrorHandler, returnError } = require('./helpers/errorHandler');
+const authRouter = require('./resources/auth/auth.router');
+const { returnError } = require('./helpers/errorHandler');
+const { checkToken } = require('./helpers/myCrypt');
 
 const app = express();
 const swaggerDocument = YAML.load(path.join(__dirname, '../doc/api.yaml'));
 
 const { morgan, logger } = require('./middleware/logger');
+const passport = require('passport');
+
 app.use(express.json());
 
 app.use('/doc', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
+app.use(passport.initialize());
 
 app.use('/', (req, res, next) => {
   if (req.originalUrl === '/') {
@@ -30,7 +35,15 @@ app.use(
     }
   )
 );
-app.use('/users', userRouter);
+/*
+checkToken,
+app.use(
+  '/users',
+  passport.authenticate('bearer', { session: false }),
+  userRouter
+);*/
+
+app.use('/users', /* authenticate, */ userRouter);
 app.use('/boards', boardRouter);
 boardRouter.use(
   '/:boardId/tasks',
@@ -38,8 +51,10 @@ boardRouter.use(
     req.boardId = req.param.boardId;
     next();
   },
+
   taskRouter
 );
+app.use('/login', authRouter);
 
 app.use((err, req, res, next) => {
   returnError(err, res);
