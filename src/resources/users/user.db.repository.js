@@ -19,16 +19,20 @@ const updateUserById = async (id, userData) => {
 const deleteUserById = async id => {
   return (await User.deleteOne({ _id: id }).exec()).deletedCount;
 };
-
+/*
 const checkUserAuth = async (login, password) => {
   return User.findOne({ login, password });
-};
+};*/
 
+const getUserByLogin = async login => {
+  return User.findOne({ login });
+};
 module.exports = {
   getAll,
   getUserById,
   setUser,
   updateUserById,
   deleteUserById,
-  checkUserAuth
+  /* checkUserAuth,*/
+  getUserByLogin
 };

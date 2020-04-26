@@ -6,29 +6,33 @@ const User = require('../users/user.model');
 const usersService = require('../users/user.service');
 
 passport.use(
-  'local',
   new LocalStrategy(
     { usernameField: 'login', passwordField: 'password' },
-    (username, password, done) => {
-      const user = usersService.checkUserAuth(username, password);
+    async (username, password, done) => {
+      const user = await usersService.checkUserAuth(username, password);
+      // .then(user => {
+      console.log(`${`local str user=${user.login}` + ' user='}${user}`);
+      if (!user) {
+        return done(null, false, 'Bad login/password combination');
+      }
+      console.log('local str before return');
+      return done(null, user);
+      // });
+
       /*  User.findOne({ login: username }, (err, user) => {
         if (err) {
           return done(err);
         }*/
 
-      if (!user) {
-        return done(null, false, 'Bad login/password combination');
-      }
-      return done(null, user);
       // }      );
     }
   )
 );
 passport.use(
-  'bearer',
-  new BearerStrategy((token, done) => {
-    const user = usersService.findOneByToken({ token });
-
+  new BearerStrategy(async (token, done) => {
+    console.log(`bearer str user=${token}`);
+    const user = await usersService.findOneByToken(token);
+    console.log(`${`bearer str user=${user.login}` + ' user='}${user}`);
     if (!user) {
       return done(null, false);
     }
@@ -37,8 +41,26 @@ passport.use(
 );
 const authenticate = passport.authenticate('bearer', { session: false });
 const authenticateLocal = passport.authenticate('local', {
-  failureRedirect: '/login',
-  ession: false
+  //  failureRedirect: '/login',
+  session: false
 });
 
-module.exports = { authenticate, authenticateLocal };
+const checkTokenF = async (req, res, next) => {
+  console.log(`in checkToken=${req.header('Authorization')}`);
+  const token = req.header('Authorization').replace('Bearer ', '');
+  console.log(`in token=${token}`);
+  try {
+    const user = await usersService.findOneByToken(token);
+    console.log(`${`bearer str user=${user.login}` + ' user='}${user}`);
+    if (!user) {
+      res.status(401).send({ error: 'Not authorized to access this resource' });
+    }
+    req.token = token;
+    req.user = user;
+
+    return next();
+  } catch (error) {
+    res.status(401).send({ error: 'Not authorized to access this resource' });
+  }
+};
+module.exports = { authenticate, authenticateLocal, checkTokenF };

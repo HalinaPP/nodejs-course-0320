@@ -5,6 +5,18 @@ const { ErrorHandler } = require('./errorHandler');
 const jwt = require('jsonwebtoken');
 
 const hashPassword = async password => {
+  // return bcrypt.hash(password, 10);
+  /* , (err, encrypt) => {
+    if (err) {
+      throw new ErrorHandler(500, statusCodes[500]);
+    }
+    console.log(`new_hash=${encrypt} Salt=${SALT}`);
+    return encrypt;
+  });
+  /* console.log(`new_hash2=${hash} Salt=${SALT}`);
+  return hash;
+  // return hash;
+  */
   return await bcrypt
     .hash(password, 10)
     .then(hash => {
@@ -15,8 +27,8 @@ const hashPassword = async password => {
     .catch(() => {
       throw new ErrorHandler(500, statusCodes[500]);
     });
-  // , (err, encrString) => {
-  /*    if (err) {
+  /* await bcrypt.hash(password, 10, (err, encrString) => {
+    if (err) {
       throw new ErrorHandler(500, statusCodes[500]);
     }
 
@@ -24,25 +36,40 @@ const hashPassword = async password => {
     return encrString;
   });
 
-  console.log(`new_hash2=${hasnNew} Salt=${SALT}`);
+  /* console.log(`new_hash2=${hasnNew} Salt=${SALT}`);
   return hasnNew;*/
 };
 
 const checkPassword = async (password, hash) => {
-  bcrypt.compare(password, hash, (err, result) => {
+  return await bcrypt
+    .compare(password, hash)
+    .then(result => {
+      console.log(`res=${result}`);
+      return result;
+    })
+    .catch(() => {
+      throw new ErrorHandler(500, statusCodes[500]);
+    });
+
+  /* , (err, result) => {
     if (err) {
       throw new ErrorHandler(403, statusCodes[403]);
     }
+    console.log(`res=${result}`);
     return result;
-  });
+  });*/
 };
 const getDataFromToken = async token => {
-  return;
+  console.log(`token get data =${token}`);
+  const { user, login } = await jwt.verify(token, JWT_SECRET_KEY);
+  console.log(`pay=${login} user=${user}`);
+  return { user, login };
 };
 
 const createToken = user => {
+  console.log(`us_id=${user.id} l=${user.login}`);
   const payload = { user: user.id, login: user.login };
-  const token = jwt.sign(payload, JWT_SECRET_KEY, { expiresIn: 10 });
+  const token = jwt.sign(payload, JWT_SECRET_KEY, { expiresIn: 100 });
   return token;
 };
 

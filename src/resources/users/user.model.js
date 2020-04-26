@@ -13,7 +13,15 @@ const userSchema = new mongoose.Schema(
   },
   { versionKey: false }
 );
-
+/* const bcrypt = require('bcrypt');
+userSchema.pre('save', async next => {
+  // Hash the password before saving the user model
+  const user = this;
+  // if (user.isModified('password')) {
+  user.password = await bcrypt.hash(user.password, 10);
+  // }
+  next();
+});*/
 userSchema.statics.toResponse = user => {
   user.id = user._id;
   const { id, name, login } = user;

@@ -8,6 +8,7 @@ const taskRouter = require('./resources/tasks/task.router');
 const authRouter = require('./resources/auth/auth.router');
 const { returnError } = require('./helpers/errorHandler');
 const { checkToken } = require('./helpers/myCrypt');
+const { authenticate, checkTokenF } = require('./resources/auth/auth.service');
 
 const app = express();
 const swaggerDocument = YAML.load(path.join(__dirname, '../doc/api.yaml'));
@@ -43,15 +44,15 @@ app.use(
   userRouter
 );*/
 
-app.use('/users', /* authenticate, */ userRouter);
-app.use('/boards', boardRouter);
+app.use('/users', authenticate, userRouter);
+app.use('/boards', authenticate, boardRouter);
 boardRouter.use(
   '/:boardId/tasks',
   (req, res, next) => {
     req.boardId = req.param.boardId;
     next();
   },
-
+  authenticate,
   taskRouter
 );
 app.use('/login', authRouter);
