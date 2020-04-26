@@ -1,5 +1,5 @@
 const { logger } = require('./middleware/logger');
-/*
+
 process
   .on('unhandledRejection', reason => {
     logger.error(`Unhandled Rejection at Promise: ${reason.message}`);
@@ -9,7 +9,6 @@ process
     logger.error(`Uncaught Exception: ${error}`);
     process.exitCode = 1;
   });
-*/
 
 const { connectToDB } = require('./db/db.client');
 const { PORT } = require('./common/config');

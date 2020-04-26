@@ -3,23 +3,10 @@ const { MONGO_CONNECTION_STRING } = require('../common/config');
 const User = require('../resources/users/user.model');
 const Board = require('../resources/boards/board.model');
 const Task = require('../resources/tasks/task.model');
-// const myCrypt = require('../helpers/myCrypt');
+
 const bcrypt = require('bcrypt');
-const { SALT, JWT_SECRET_KEY } = require('../common/config');
 
-/* const hash = myCrypt.hashPassword('admin');
-const str = hash;
-console.log(`h=${hash}`);*/
 const hash = bcrypt.hashSync('admin', 10);
-/* , (err, encrString) => {
-  if (err) {
-    // throw new ErrorHandler(500, statusCodes[500]);
-  }
-
-  console.log(`err=${err}new_hash=${encrString} Salt=${SALT}`);
-  return encrString;
-});*/
-console.log(`hash=${hash}`);
 
 const users = [
   new User({

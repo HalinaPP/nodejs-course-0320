@@ -1,66 +1,77 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const BearerStrategy = require('passport-http-bearer').Strategy;
-
-const User = require('../users/user.model');
 const usersService = require('../users/user.service');
+const statusCodes = require('../users/user.constants');
 
 passport.use(
   new LocalStrategy(
     { usernameField: 'login', passwordField: 'password' },
     async (username, password, done) => {
-      const user = await usersService.checkUserAuth(username, password);
-      // .then(user => {
-      console.log(`${`local str user=${user.login}` + ' user='}${user}`);
-      if (!user) {
-        return done(null, false, 'Bad login/password combination');
+      try {
+        const user = await usersService.checkUserAuth(username, password);
+        if (!user) {
+          return done(null, false, {
+            message: 'Bad login/password combination'
+          });
+        }
+        return done(null, user);
+      } catch (error) {
+        return done(null, false);
       }
-      console.log('local str before return');
-      return done(null, user);
-      // });
-
-      /*  User.findOne({ login: username }, (err, user) => {
-        if (err) {
-          return done(err);
-        }*/
-
-      // }      );
     }
   )
 );
+
 passport.use(
   new BearerStrategy(async (token, done) => {
-    console.log(`bearer str user=${token}`);
-    const user = await usersService.findOneByToken(token);
-    console.log(`${`bearer str user=${user.login}` + ' user='}${user}`);
-    if (!user) {
+    if (!token) {
       return done(null, false);
     }
-    return done(null, user, { scope: 'all' });
+    try {
+      const user = await usersService.findOneByToken(token);
+      if (!user) {
+        return done(null, false);
+      }
+      return done(null, user, { scope: 'all' });
+    } catch (error) {
+      return done(null, false);
+    }
   })
 );
-const authenticate = passport.authenticate('bearer', { session: false });
-const authenticateLocal = passport.authenticate('local', {
-  //  failureRedirect: '/login',
-  session: false
-});
 
-const checkTokenF = async (req, res, next) => {
-  console.log(`in checkToken=${req.header('Authorization')}`);
-  const token = req.header('Authorization').replace('Bearer ', '');
-  console.log(`in token=${token}`);
-  try {
-    const user = await usersService.findOneByToken(token);
-    console.log(`${`bearer str user=${user.login}` + ' user='}${user}`);
-    if (!user) {
-      res.status(401).send({ error: 'Not authorized to access this resource' });
+const authenticate = (req, res, next) => {
+  passport.authenticate('bearer', { session: false }, (err, user) => {
+    if (err) {
+      return next(err);
     }
-    req.token = token;
+    if (!user) {
+      return res.status(401).send(statusCodes[401]);
+    }
     req.user = user;
 
     return next();
-  } catch (error) {
-    res.status(401).send({ error: 'Not authorized to access this resource' });
-  }
+  })(req, res, next);
 };
-module.exports = { authenticate, authenticateLocal, checkTokenF };
+
+const authenticateLocal = (req, res, next) => {
+  passport.authenticate(
+    'local',
+    {
+      failureRedirect: '/login',
+      session: false
+    },
+    (err, user) => {
+      if (err) {
+        return next(err);
+      }
+      if (!user) {
+        res.status(403).send(statusCodes[403]);
+      }
+      req.user = user;
+      return next();
+    }
+  )(req, res, next);
+};
+
+module.exports = { authenticate, authenticateLocal };

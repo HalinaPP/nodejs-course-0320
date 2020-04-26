@@ -7,8 +7,7 @@ const boardRouter = require('./resources/boards/board.router');
 const taskRouter = require('./resources/tasks/task.router');
 const authRouter = require('./resources/auth/auth.router');
 const { returnError } = require('./helpers/errorHandler');
-const { checkToken } = require('./helpers/myCrypt');
-const { authenticate, checkTokenF } = require('./resources/auth/auth.service');
+const { authenticate } = require('./resources/auth/auth.service');
 
 const app = express();
 const swaggerDocument = YAML.load(path.join(__dirname, '../doc/api.yaml'));
@@ -36,13 +35,6 @@ app.use(
     }
   )
 );
-/*
-checkToken,
-app.use(
-  '/users',
-  passport.authenticate('bearer', { session: false }),
-  userRouter
-);*/
 
 app.use('/users', authenticate, userRouter);
 app.use('/boards', authenticate, boardRouter);
