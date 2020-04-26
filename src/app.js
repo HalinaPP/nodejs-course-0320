@@ -48,7 +48,7 @@ boardRouter.use(
   taskRouter
 );
 app.use('/login', authRouter);
-
+app.use('*', authenticate);
 app.use((err, req, res, next) => {
   returnError(err, res);
   next();
