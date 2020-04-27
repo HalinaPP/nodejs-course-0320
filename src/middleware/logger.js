@@ -25,8 +25,7 @@ const logger = new createLogger({
       level: 'info',
       format: format.combine(format.timestamp(), format.prettyPrint())
     })
-  ] /* ,
-  exceptionHandlers: [new transports.File({ filename: './logs/error2.log' })]*/
+  ]
 });
 logger.stream = {
   write(message) {
