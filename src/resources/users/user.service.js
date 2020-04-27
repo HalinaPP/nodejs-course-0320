@@ -1,6 +1,7 @@
 const usersRepo = require('./user.db.repository');
 const tasks = require('../tasks/task.db.repository');
 const myCrypt = require('../../helpers/myCrypt');
+const webToken = require('../../helpers/webToken');
 
 const getAll = () => usersRepo.getAll();
 const getUserById = async id => usersRepo.getUserById(id);
@@ -21,6 +22,7 @@ const deleteUserById = async id => {
   await tasks.deleteUserInTask(id);
   return await usersRepo.deleteUserById(id);
 };
+
 const checkUserAuth = async (login, password) => {
   const user = await usersRepo.getUserByLogin(login);
   if (!user) {
@@ -31,7 +33,7 @@ const checkUserAuth = async (login, password) => {
 };
 
 const findOneByToken = async token => {
-  const { user } = await myCrypt.getDataFromToken(token);
+  const { user } = await webToken.getDataFromToken(token);
   return await getUserById(user);
 };
 

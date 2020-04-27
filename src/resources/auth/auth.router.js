@@ -1,10 +1,10 @@
 const router = require('express').Router();
 const usersService = require('../users/user.service');
-const authService = require('./auth.service');
-const myCrypt = require('../../helpers/myCrypt');
+const { authenticate, authenticateLocal } = require('./auth.service');
+const webToken = require('../../helpers/webToken');
 const statusCodes = require('../users/user.constants');
 
-router.route('/').post(authService.authenticateLocal, async (req, res) => {
+router.route('/').post(authenticateLocal, async (req, res) => {
   if (!req.user) {
     res.status(403).send(statusCodes[403]);
   }
@@ -12,9 +12,9 @@ router.route('/').post(authService.authenticateLocal, async (req, res) => {
   if (!user) {
     res.status(403).send(statusCodes[403]);
   } else {
-    const token = myCrypt.createToken(user);
+    const token = webToken.createToken(user);
     res.send({ user, token });
   }
 });
 
-module.exports = router;
+module.exports = { authRouter: router, authenticate };

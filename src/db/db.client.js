@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
-const { MONGO_CONNECTION_STRING } = require('../common/config');
+const { SALT, MONGO_CONNECTION_STRING } = require('../common/config');
 const User = require('../resources/users/user.model');
 const Board = require('../resources/boards/board.model');
 const Task = require('../resources/tasks/task.model');
 
 const bcrypt = require('bcrypt');
 
-const hash = bcrypt.hashSync('admin', 10);
+const hash = bcrypt.hashSync('admin', parseInt(SALT, 10));
 
 const users = [
   new User({
