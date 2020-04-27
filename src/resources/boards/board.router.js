@@ -4,6 +4,7 @@ const boardsService = require('./board.service');
 const statusCodes = require('./board.constants.js');
 const { ErrorHandler, catchError } = require('./../../helpers/errorHandler');
 const { isUUID } = require('./../../helpers/validator');
+const HttpStatus = require('http-status-codes');
 
 router
   .route('/')
@@ -11,11 +12,11 @@ router
     catchError(async (req, res, next) => {
       const boards = await boardsService.getAll();
 
-      res.statusMessage = statusCodes[200].all;
+      res.statusMessage = statusCodes[HttpStatus.OK].all;
       res.contentType = 'application/json';
       res
         .json(boards.map(Board.toResponse))
-        .status(200)
+        .status(HttpStatus.OK)
         .end();
       next();
     })
@@ -26,11 +27,11 @@ router
       const newBoard = req.body;
       const board = await boardsService.createBoard(newBoard);
 
-      res.statusMessage = statusCodes[200].create;
+      res.statusMessage = statusCodes[HttpStatus.OK].create;
       res.contentType = 'application/json';
       res
         .json(Board.toResponse(board))
-        .status(200)
+        .status(HttpStatus.OK)
         .end();
       next();
     })
@@ -43,13 +44,16 @@ router
       const board = await boardsService.getBoardById(req.params.id);
 
       if (!board) {
-        throw new ErrorHandler(404, statusCodes[404]);
+        throw new ErrorHandler(
+          HttpStatus.NOT_FOUND,
+          statusCodes[HttpStatus.NOT_FOUND]
+        );
       } else {
-        res.statusMessage = statusCodes[200].all;
+        res.statusMessage = statusCodes[HttpStatus.OK].all;
         res.contentType = 'application/json';
         res
           .json(Board.toResponse(board))
-          .status(200)
+          .status(HttpStatus.OK)
           .end();
       }
       next();
@@ -62,7 +66,7 @@ router
       const boardId = req.params.id;
 
       if (!boardId || !isUUID(boardId)) {
-        throw new ErrorHandler(400, statusCodes[400]);
+        throw new ErrorHandler(HttpStatus.BAD_REQUEST);
       }
 
       const board = await boardsService.updateBoardById(
@@ -71,13 +75,16 @@ router
       );
 
       if (!board) {
-        throw new ErrorHandler(404, statusCodes[404]);
+        throw new ErrorHandler(
+          HttpStatus.NOT_FOUND,
+          statusCodes[HttpStatus.NOT_FOUND]
+        );
       } else {
-        res.statusMessage = statusCodes[200].update;
+        res.statusMessage = statusCodes[HttpStatus.OK].update;
         res.contentType = 'application/json';
         res
           .json(Board.toResponse(board))
-          .status(200)
+          .status(HttpStatus.OK)
           .end();
       }
       next();
@@ -89,15 +96,18 @@ router
       const boardId = req.params.id;
 
       if (!boardId || !isUUID(boardId)) {
-        throw new ErrorHandler(400, statusCodes[400]);
+        throw new ErrorHandler(HttpStatus.BAD_REQUEST);
       }
       const deleteCount = await boardsService.deleteBoardById(boardId);
 
       if (deleteCount === 0) {
-        throw new ErrorHandler(404, statusCodes[404]);
+        throw new ErrorHandler(
+          HttpStatus.NOT_FOUND,
+          statusCodes[HttpStatus.NOT_FOUND]
+        );
       } else {
-        res.statusMessage = statusCodes[204];
-        res.status(204).end();
+        res.statusMessage = statusCodes[HttpStatus.NO_CONTENT];
+        res.status(HttpStatus.NO_CONTENT).end();
       }
       next();
     })

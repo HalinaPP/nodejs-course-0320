@@ -1,4 +1,5 @@
 const Task = require('./task.model');
+const HttpStatus = require('http-status-codes');
 
 const getAll = async boardId => {
   return Task.find({
@@ -40,11 +41,11 @@ const deleteUserInTask = async userId => {
     let statusCode;
     try {
       if (task.n === task.nModified) {
-        return 500;
+        return HttpStatus.INTERNAL_SERVER_ERROR;
       }
-      statusCode = 200;
+      statusCode = HttpStatus.OK;
     } catch (error) {
-      statusCode = 400;
+      statusCode = HttpStatus.NOT_FOUND;
     }
     return statusCode;
   });

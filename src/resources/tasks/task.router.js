@@ -4,6 +4,7 @@ const tasksService = require('./task.service');
 const statusCodes = require('./task.constants.js');
 const { ErrorHandler, catchError } = require('./../../helpers/errorHandler');
 const { isUUID } = require('./../../helpers/validator');
+const HttpStatus = require('http-status-codes');
 
 router
   .route('/')
@@ -11,18 +12,21 @@ router
     catchError(async (req, res, next) => {
       const boardId = req.params.boardId;
       if (!boardId || !isUUID(boardId)) {
-        throw new ErrorHandler(400, statusCodes[400]);
+        throw new ErrorHandler(HttpStatus.BAD_REQUEST);
       }
 
       const tasks = await tasksService.getAll(boardId);
       if (!tasks) {
-        throw new ErrorHandler(404, statusCodes[404]);
+        throw new ErrorHandler(
+          HttpStatus.NOT_FOUND,
+          statusCodes[HttpStatus.NOT_FOUND]
+        );
       } else {
-        res.statusMessage = statusCodes[200].all;
+        res.statusMessage = statusCodes[HttpStatus.OK].all;
         res.contentType = 'application/json';
         res
           .json(tasks.map(Task.toResponse))
-          .status(200)
+          .status(HttpStatus.OK)
           .end();
       }
       next();
@@ -34,16 +38,16 @@ router
       const newTask = req.body;
       const boardId = req.params.boardId;
       if (!boardId || !isUUID(boardId)) {
-        throw new ErrorHandler(400, statusCodes[400]);
+        throw new ErrorHandler(HttpStatus.BAD_REQUEST);
       }
 
       const task = await tasksService.createTask(newTask, boardId);
 
-      res.statusMessage = statusCodes[200].create;
+      res.statusMessage = statusCodes[HttpStatus.OK].create;
       res.contentType = 'application/json';
       res
         .json(Task.toResponse(task))
-        .status(200)
+        .status(HttpStatus.OK)
         .end();
       next();
     })
@@ -56,18 +60,21 @@ router
       const boardId = req.params.boardId;
       const taskId = req.params.id;
       if (!boardId || !isUUID(boardId) || !taskId || !isUUID(taskId)) {
-        throw new ErrorHandler(400, statusCodes[400]);
+        throw new ErrorHandler(HttpStatus.BAD_REQUEST);
       }
 
       const task = await tasksService.getTaskById(taskId, boardId);
       if (!task) {
-        throw new ErrorHandler(404, statusCodes[404]);
+        throw new ErrorHandler(
+          HttpStatus.NOT_FOUND,
+          statusCodes[HttpStatus.NOT_FOUND]
+        );
       } else {
-        res.statusMessage = statusCodes[200].all;
+        res.statusMessage = statusCodes[HttpStatus.OK].all;
         res.contentType = 'application/json';
         res
           .json(Task.toResponse(task))
-          .status(200)
+          .status(HttpStatus.OK)
           .end();
       }
       next();
@@ -80,7 +87,7 @@ router
       const boardId = req.params.boardId;
       const taskId = req.params.id;
       if (!boardId || !isUUID(boardId) || !taskId || !isUUID(taskId)) {
-        throw new ErrorHandler(400, statusCodes[400]);
+        throw new ErrorHandler(HttpStatus.BAD_REQUEST);
       }
 
       const task = await tasksService.updateTaskById(
@@ -90,13 +97,16 @@ router
       );
 
       if (!task) {
-        throw new ErrorHandler(404, statusCodes[404]);
+        throw new ErrorHandler(
+          HttpStatus.NOT_FOUND,
+          statusCodes[HttpStatus.NOT_FOUND]
+        );
       } else {
-        res.statusMessage = statusCodes[200].update;
+        res.statusMessage = statusCodes[HttpStatus.OK].update;
         res.contentType = 'application/json';
         res
           .json(Task.toResponse(task))
-          .status(200)
+          .status(HttpStatus.OK)
           .end();
       }
       next();
@@ -108,15 +118,18 @@ router
       const boardId = req.params.boardId;
       const taskId = req.params.id;
       if (!boardId || !isUUID(boardId) || !taskId || !isUUID(taskId)) {
-        throw new ErrorHandler(400, statusCodes[400]);
+        throw new ErrorHandler(HttpStatus.BAD_REQUEST);
       }
 
       const deleteCount = await tasksService.deleteTaskById(taskId, boardId);
       if (deleteCount === 0) {
-        throw new ErrorHandler(404, statusCodes[404]);
+        throw new ErrorHandler(
+          HttpStatus.NOT_FOUND,
+          statusCodes[HttpStatus.NOT_FOUND]
+        );
       } else {
-        res.statusMessage = statusCodes[204];
-        res.status(204).end();
+        res.statusMessage = statusCodes[HttpStatus.NO_CONTENT];
+        res.status(HttpStatus.NO_CONTENT).end();
       }
       next();
     })

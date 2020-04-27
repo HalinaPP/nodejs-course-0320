@@ -1,16 +1,19 @@
+const HttpStatus = require('http-status-codes');
+
 class ErrorHandler extends Error {
-  constructor(statusCode, message) {
+  constructor(statusCode, message = '') {
     super();
     this.statusCode = statusCode;
-    this.message = message;
+    this.message =
+      message === '' ? HttpStatus.getStatusText(statusCode) : message;
   }
 }
 
 const returnError = (err, res) => {
   let { statusCode, message } = err;
   if (!statusCode) {
-    statusCode = 500;
-    message = 'Internal server error';
+    statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
+    message = HttpStatus.getStatusText(statusCode);
   }
   res.status(statusCode).json({
     status: 'error',

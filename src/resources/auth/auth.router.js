@@ -1,19 +1,25 @@
 const router = require('express').Router();
 const usersService = require('../users/user.service');
+const User = require('../users/user.model');
 const { authenticate, authenticateLocal } = require('./auth.service');
 const webToken = require('../../helpers/webToken');
-const statusCodes = require('../users/user.constants');
+const HttpStatus = require('http-status-codes');
 
 router.route('/').post(authenticateLocal, async (req, res) => {
   if (!req.user) {
-    res.status(403).send(statusCodes[403]);
+    res
+      .status(HttpStatus.FORBIDDEN)
+      .send(HttpStatus.getStatusText(HttpStatus.FORBIDDEN));
   }
   const user = await usersService.getUserById(req.user._id);
+
   if (!user) {
-    res.status(403).send(statusCodes[403]);
+    res
+      .status(HttpStatus.FORBIDDEN)
+      .send(HttpStatus.getStatusText(HttpStatus.FORBIDDEN));
   } else {
     const token = webToken.createToken(user);
-    res.send({ user, token });
+    res.send({ user: User.toResponse(user), token });
   }
 });
 

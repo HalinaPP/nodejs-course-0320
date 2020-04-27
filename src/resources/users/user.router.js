@@ -4,17 +4,18 @@ const usersService = require('./user.service');
 const statusCodes = require('./user.constants.js');
 const { ErrorHandler, catchError } = require('./../../helpers/errorHandler');
 const { isUUID } = require('./../../helpers/validator');
+const HttpStatus = require('http-status-codes');
 
 router
   .route('/')
   .get(
     catchError(async (req, res, next) => {
       const users = await usersService.getAll();
-      res.statusMessage = statusCodes[200].all;
+      res.statusMessage = statusCodes[HttpStatus.OK].all;
       res.contentType = 'application/json';
       res
         .json(users.map(User.toResponse))
-        .status(200)
+        .status(HttpStatus.OK)
         .end();
       next();
     })
@@ -25,11 +26,11 @@ router
       const newUser = req.body;
       const user = await usersService.setUser(newUser);
 
-      res.statusMessage = statusCodes[200].update;
+      res.statusMessage = statusCodes[HttpStatus.OK].update;
       res.contentType = 'application/json';
       res
         .json(User.toResponse(user))
-        .status(200)
+        .status(HttpStatus.OK)
         .end();
       next();
     })
@@ -41,18 +42,21 @@ router
     catchError(async (req, res, next) => {
       const userId = req.params.id;
       if (!userId || !isUUID(userId)) {
-        throw new ErrorHandler(400, statusCodes[400]);
+        throw new ErrorHandler(HttpStatus.BAD_REQUEST);
       }
       const user = await usersService.getUserById(userId);
 
       if (!user) {
-        throw new ErrorHandler(404, statusCodes[404]);
+        throw new ErrorHandler(
+          HttpStatus.NOT_FOUND,
+          statusCodes[HttpStatus.NOT_FOUND]
+        );
       } else {
-        res.statusMessage = statusCodes[200].all;
+        res.statusMessage = statusCodes[HttpStatus.OK].all;
         res.contentType = 'application/json';
         res
           .json(User.toResponse(user))
-          .status(200)
+          .status(HttpStatus.OK)
           .end();
       }
       next();
@@ -65,18 +69,21 @@ router
       const userId = req.params.id;
 
       if (!userId || !isUUID(userId)) {
-        throw new ErrorHandler(400, statusCodes[400]);
+        throw new ErrorHandler(HttpStatus.BAD_REQUEST);
       }
       const user = await usersService.updateUserById(userId, newUserData);
 
       if (!user) {
-        throw new ErrorHandler(404, statusCodes[404]);
+        throw new ErrorHandler(
+          HttpStatus.NOT_FOUND,
+          statusCodes[HttpStatus.NOT_FOUND]
+        );
       } else {
-        res.statusMessage = statusCodes[200].update;
+        res.statusMessage = statusCodes[HttpStatus.OK].update;
         res.contentType = 'application/json';
         res
           .json(User.toResponse(user))
-          .status(200)
+          .status(HttpStatus.OK)
           .end();
       }
       next();
@@ -88,16 +95,19 @@ router
       const userId = req.params.id;
 
       if (!userId || !isUUID(userId)) {
-        throw new ErrorHandler(400, statusCodes[400]);
+        throw new ErrorHandler(HttpStatus.BAD_REQUEST);
       }
 
       const deleteCount = await usersService.deleteUserById(userId);
 
       if (deleteCount === 0) {
-        throw new ErrorHandler(404, statusCodes[404]);
+        throw new ErrorHandler(
+          HttpStatus.NOT_FOUND,
+          statusCodes[HttpStatus.NOT_FOUND]
+        );
       } else {
-        res.statusMessage = statusCodes[204];
-        res.status(204).end();
+        res.statusMessage = statusCodes[HttpStatus.NO_CONTENT];
+        res.status(HttpStatus.NO_CONTENT).end();
       }
       next();
     })

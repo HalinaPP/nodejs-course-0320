@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const { SALT } = require('../common/config');
-const statusCodes = require('../resources/users/user.constants');
 const { ErrorHandler } = require('./errorHandler');
+const HttpStatus = require('http-status-codes');
 
 const hashPassword = async password => {
   return await bcrypt
@@ -10,7 +10,7 @@ const hashPassword = async password => {
       return hash;
     })
     .catch(() => {
-      throw new ErrorHandler(500, statusCodes[500]);
+      throw new ErrorHandler(HttpStatus.INTERNAL_SERVER_ERROR);
     });
 };
 
@@ -21,7 +21,7 @@ const checkPassword = async (password, hash) => {
       return result;
     })
     .catch(() => {
-      throw new ErrorHandler(500, statusCodes[500]);
+      throw new ErrorHandler(HttpStatus.INTERNAL_SERVER_ERROR);
     });
 };
 module.exports = {

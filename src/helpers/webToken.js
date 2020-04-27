@@ -8,7 +8,7 @@ const getDataFromToken = async token => {
 
 const createToken = user => {
   const payload = { user: user.id, login: user.login };
-  const token = jwt.sign(payload, JWT_SECRET_KEY, { expiresIn: 100 });
+  const token = jwt.sign(payload, JWT_SECRET_KEY, { expiresIn: 1000 });
   return token;
 };
 
